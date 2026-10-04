@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Aygo Blend • Calcul de mélange E85 / SP98</title>
+<style>
+:root{--ink:#102b34;--muted:#52655e;--green:#00685c;--mint:#daf1e8;--paper:#f5f7f5;--line:#dbe4df;--amber:#9d560d;--amber-bg:#fff3dc;--radius:20px;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper)}
+*{box-sizing:border-box}body{margin:0}button,input{font:inherit}a{color:var(--green);text-underline-offset:3px}a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #397fde;outline-offset:3px}header{max-width:1180px;margin:auto;padding:28px 30px 18px;display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{display:flex;gap:12px;align-items:center;font-weight:750;font-size:20px;letter-spacing:-.6px}.mark{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:var(--green);color:white}.badge{padding:8px 12px;border:1px solid var(--line);border-radius:30px;color:var(--muted);font-size:12px;background:white}.hero{max-width:1180px;margin:auto;padding:25px 30px 30px}.eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:12px;font-weight:750;color:var(--green);margin:0 0 13px}h1{font-size:clamp(32px,4.8vw,52px);line-height:1.08;letter-spacing:-1.9px;margin:0 0 16px;max-width:820px}.lead{max-width:720px;color:var(--muted);line-height:1.7;margin:0;font-size:16px}.layout{max-width:1180px;margin:auto;padding:0 30px 32px;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:26px}.panel{border:1px solid var(--line);background:white;border-radius:var(--radius);padding:28px;box-shadow:0 8px 32px #142d3510}.panel h2{margin:0 0 8px;font-size:21px;letter-spacing:-.6px}.small{font-size:13px;color:var(--muted);line-height:1.6}.steps{border-top:1px solid var(--line);margin-top:24px;padding-top:22px}.step-title{font-size:14px;font-weight:750;margin:0 0 14px;display:flex;gap:9px;align-items:center}.step-title span{color:var(--green);font-size:12px;background:var(--mint);border-radius:50%;display:grid;place-items:center;width:24px;height:24px}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}.field>span{font-size:13px;font-weight:650}.input{display:flex;border:1px solid #bdcdc5;border-radius:11px;overflow:hidden;align-items:center;background:#fafcfb}.input:focus-within{border-color:var(--green)}.input input{width:100%;min-width:0;padding:12px;border:0;background:transparent;color:var(--ink);font-size:18px;outline:none}.input em{padding:0 12px 0 2px;color:var(--muted);font-size:13px;font-style:normal}.scenario{width:100%;background:var(--paper);color:var(--green);border:1px solid var(--line);border-radius:11px;padding:13px;margin-top:12px;font-weight:650;font-size:13px;cursor:pointer}.linkbutton{border:0;background:none;color:var(--green);padding:0 0 10px;font-size:13px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.check{display:flex;gap:10px;align-items:center;font-size:13px;line-height:1.5}.check input{accent-color:var(--green);width:18px;height:18px}.primary{background:var(--green);color:white;border:0;width:100%;border-radius:12px;padding:15px;font-weight:700;cursor:pointer;margin-top:20px}.primary:hover{background:#005448}.secondary{border:1px solid var(--line);border-radius:11px;padding:12px;background:white;cursor:pointer;color:var(--ink);font-size:13px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.aside{display:flex;flex-direction:column;gap:18px}.note{padding:20px;border-radius:var(--radius);background:var(--mint);border:1px solid #bce0d0}.note strong{font-size:15px}.note p{font-size:13px;line-height:1.65;margin-bottom:0}.result{position:relative;overflow:hidden}.result .eyebrow{margin-bottom:20px}.result-title{font-size:25px;line-height:1.25;letter-spacing:-.7px;margin:0 0 15px}.status{display:inline-block;font-size:12px;letter-spacing:.03em;background:var(--amber-bg);color:var(--amber);border-radius:30px;padding:7px 12px;margin-bottom:15px}.result p{line-height:1.6}.values{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}.value{border:1px solid var(--line);background:var(--paper);border-radius:14px;padding:18px}.value b{font-size:29px;letter-spacing:-1px;display:block;line-height:1.25;color:var(--green);font-variant-numeric:tabular-nums}.value label{font-size:12px;color:var(--muted);display:block;margin-top:5px}.range{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:17px;margin-top:17px}.range span{font-size:13px;color:var(--muted)}.range b{font-variant-numeric:tabular-nums;font-size:16px}.meter{display:flex;gap:5px;margin:18px 0 12px}.meter i{height:13px;flex:1;border-radius:3px;background:#e4ede7}.meter i:nth-child(-n+2){background:var(--green)}.notice{padding:12px 14px;background:var(--amber-bg);border-left:3px solid #c88931;border-radius:6px;font-size:13px;line-height:1.6}.error{color:#9b291e;line-height:1.5;font-size:13px}details{border-top:1px solid var(--line);padding-top:15px;margin-top:20px}summary{cursor:pointer;font-weight:650;font-size:13px}details p,details li{font-size:13px;line-height:1.65}code{font-size:12px;overflow-wrap:anywhere}footer{max-width:1180px;margin:auto;padding:0 30px 35px;font-size:12px;color:var(--muted);line-height:1.7}.result.stale .calculated{display:none}[hidden]{display:none!important}@media(max-width:780px){header{padding:18px 20px}.badge{font-size:11px}.hero{padding:20px}.layout{grid-template-columns:1fr;padding:0 20px 28px;gap:18px}.panel{padding:22px}h1{letter-spacing:-1px}.aside{order:-1}.note{padding:18px}.result{order:2}.lead{font-size:14px}footer{padding:0 20px 28px}}@media print{header,.hero,.form-panel,.note,footer,.actions,details{display:none}.layout{display:block;padding:0}.panel{border:0;box-shadow:none}.aside{display:block}.result{max-width:700px}.result .calculated{display:block!important}}
+</style>
+</head>
+<body>
+<header><div class="brand"><span class="mark" aria-hidden="true">A</span>Aygo Blend</div><span class="badge">Prototype 0.1.0 · Hors ligne</span></header>
+<section class="hero"><p class="eyebrow">Toyota Aygo 2014 · E85 / SP98</p><h1>Comprendre le mélange.<br>Conserver les bonnes hypothèses.</h1><p class="lead">Calculez la composition d’un appoint et sa plage d’incertitude. Le plafond choisi reste une hypothèse de simulation : aucun ratio sans voyant moteur n’est établi pour votre voiture.</p></section>
+<main class="layout">
+<section class="panel form-panel"><h2>Votre simulation</h2><p class="small">Les champs acceptent la virgule et le point. Les litres restants doivent être renseignés séparément de la jauge.</p>
+<form id="blend-form" novalidate>
+<div class="steps"><h3 class="step-title"><span>1</span>Les volumes</h3><div class="row">
+<label class="field"><span>Volume final simulé</span><span class="input"><input id="final" value="35" inputmode="decimal" autocomplete="off" aria-describedby="volume-help"><em>L</em></span></label>
+<label class="field"><span>Volume restant</span><span class="input"><input id="remaining" value="11,67" inputmode="decimal" autocomplete="off" aria-describedby="volume-help"><em>L</em></span></label>
+</div><label class="check"><input id="estimated" type="checkbox" checked>Le volume restant est estimé</label><button id="scenario" class="scenario" type="button">Scénario : 2 crans sur 6 (≈ 11,67 L)</button><p id="volume-help" class="small">35 L est une capacité nominale. Deux crans sur six ne prouvent pas qu’il reste un tiers du réservoir.</p></div>
+<div class="steps"><h3 class="step-title"><span>2</span>Le carburant restant</h3><div class="row">
+<label class="field"><span>Éthanol minimum</span><span class="input"><input id="residual-low" value="0" inputmode="decimal" autocomplete="off"><em>%</em></span></label>
+<label class="field"><span>Éthanol maximum</span><span class="input"><input id="residual-high" value="85" inputmode="decimal" autocomplete="off"><em>%</em></span></label>
+</div><button type="button" id="e5" class="linkbutton">Restant composé uniquement de carburant E5</button><p class="small">Si seuls E85 et SP98 ont été utilisés sans proportions connues, conserver 0 à 85 %.</p></div>
+<div class="steps"><h3 class="step-title"><span>3</span>La pompe E85 et le plafond</h3><div class="row">
+<label class="field"><span>Éthanol pompe min.</span><span class="input"><input id="pump-low" value="54" inputmode="decimal" autocomplete="off"><em>%</em></span></label>
+<label class="field"><span>Éthanol pompe max.</span><span class="input"><input id="pump-high" value="85" inputmode="decimal" autocomplete="off"><em>%</em></span></label>
+</div><p class="small">54 % est une borne théorique prudente d’éthanol pur en intersaison : l’annexe borne la somme éthanol + alcools supérieurs (jusqu’à 6 % de ces derniers). SP98 modélisé entre 0 et 5 %.</p>
+<label class="field"><span>Plafond final choisi</span><span class="input"><input id="target" value="10" inputmode="decimal" autocomplete="off"><em>%</em></span></label>
+<div id="error" class="error" role="alert" hidden></div><button class="primary" type="submit">Calculer la simulation →</button>
+<div class="actions"><button class="secondary" id="save" type="button">Mémoriser les hypothèses</button><button class="secondary" id="reset" type="button">Réinitialiser</button></div><p id="saved" class="small" role="status"></p>
+</div></form></section>
+<aside class="aside">
+<div class="note"><strong>Une composition, pas un diagnostic.</strong><p>Le calcul ne valide ni l’E85 pour votre Aygo, ni une calibration moteur. Sans validation spécifique, utiliser un carburant normalisé compatible reste la base établie.</p></div>
+<section id="result" class="panel result" aria-live="polite"><p class="eyebrow">Résultat conditionnel</p><div id="stale" hidden class="notice">Hypothèses modifiées. Recalculez la simulation.</div><div class="calculated">
+<span id="status" class="status">Plafond non garanti</span><h2 id="result-title" class="result-title"></h2><p id="result-body" class="small"></p>
+<div id="volumes" class="values" hidden><div class="value"><b id="e85-liters"></b><label>E85 simulé</label></div><div class="value"><b id="sp98-liters"></b><label>SP98 de complément</label></div></div>
+<div class="range"><span id="range-title">Teneur après appoint uniquement au SP98</span><b id="range-value"></b></div>
+<div class="range"><span>Volume à compléter dans ce scénario</span><b id="addition"></b></div>
+<div class="meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><p id="confidence" class="small"></p>
+<p id="above-e10" class="notice" hidden>Objectif au-delà de l’E10 : une validation spécifique du véhicule est nécessaire. Ce plafond ne représente pas une limite connue du moteur.</p>
+<div class="actions"><button id="copy" class="secondary" type="button">Copier le résultat</button><button id="print" class="secondary" type="button">Imprimer</button></div><p id="copy-status" class="small" role="status"></p>
+</div><details><summary>Formule et limites</summary><p><code>ef = (R × er + X × ep + Y × es) / (R + X + Y)</code></p><p>Les bornes hautes servent à maximiser X sous le plafond saisi. X est arrondi vers le bas au centilitre ; Y est le complément dans le modèle. L’addition des volumes, l’homogénéité et les compositions saisies sont des hypothèses. La teneur affichée ne prédit pas un voyant moteur.</p></details>
+<details><summary>Sources vérifiées le 4 octobre 2026</summary><ul><li><a href="https://media.toyota.co.uk/new-aygo-toyota-steps-fun-factor-new-city-car/" target="_blank" rel="noopener noreferrer">Toyota : Aygo 2014 et réservoir nominal 35 L</a></li><li><a href="https://www.ecologie.gouv.fr/politiques-publiques/carburants-combustibles-autorises-france" target="_blank" rel="noopener noreferrer">Ministère : carburants commercialisés en France</a></li><li><a href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000245613/" target="_blank" rel="noopener noreferrer">Légifrance : spécifications du superéthanol</a></li></ul></details>
+</section></aside>
+</main><footer>Aucun compte. Calcul local. Les hypothèses ne sont mémorisées sur cet appareil que lorsque vous le demandez. Le volume réel au premier arrêt de la pompe peut différer du scénario ; ne forcez pas un volume calculé dans le réservoir.</footer>
+<script>
+/* ENGINE_START */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.FuelBlend = api;
+})(typeof globalThis === 'object' ? globalThis : this, function () {
+  'use strict';
+  function parseDecimal(text) {
+    const s = String(text).trim().replace(',', '.');
+    if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(s)) return null;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  }
+  function validateRange(r, name) {
+    if (!r || !Number.isFinite(r.low) || !Number.isFinite(r.high) ||
+        r.low < 0 || r.high > 1 || r.low > r.high) {
+      throw new Error(name + ' : bornes attendues entre 0 et 100 %, dans cet ordre.');
+    }
+  }
+  function calculate(input) {
+    const { finalLiters: c, remainingLiters: r, residual, e85, sp98, target } = input;
+    if (![c, r, target].every(Number.isFinite) || c <= 0 || r < 0 || r > c || target < 0 || target > 1)
+      throw new Error('Volumes ou plafond invalides. Le volume final doit être positif et supérieur ou égal au restant.');
+    validateRange(residual, 'Carburant restant');
+    validateRange(e85, 'E85');
+    validateRange(sp98, 'SP98');
+    if (e85.low < sp98.high || e85.high <= sp98.high)
+      throw new Error('La plage E85 doit être au-dessus de la plage SP98.');
+    const addition = c - r;
+    function interval(x) {
+      const y = addition - x;
+      return {
+        low: (r * residual.low + x * e85.low + y * sp98.low) / c,
+        high: (r * residual.high + x * e85.high + y * sp98.high) / c
+      };
+    }
+    const baseline = interval(0);
+    if (baseline.high > target + 1e-12) {
+      return { feasible: false, additionLiters: addition, exactE85Liters: null,
+        e85Liters: null, sp98Liters: null, final: baseline,
+        minimumUpper: baseline.high, limitedBySpace: false };
+    }
+    const theoretical = (c * target - r * residual.high - addition * sp98.high) /
+      (e85.high - sp98.high);
+    const exact = Math.max(0, Math.min(addition, theoretical));
+    let x = Math.min(addition, Math.floor(exact * 100 + 1e-9) / 100);
+    // Numerical rounding must never increase the modeled upper bound above the ceiling.
+    if (interval(x).high > target + 1e-12) x = Math.max(0, x - 0.01);
+    const y = addition - x;
+    return { feasible: true, additionLiters: addition, exactE85Liters: exact,
+      e85Liters: x, sp98Liters: y, final: interval(x), minimumUpper: baseline.high,
+      limitedBySpace: theoretical >= addition - 1e-12 };
+  }
+  return { calculate, parseDecimal };
+});
+
+/* ENGINE_END */
+(()=>{'use strict';
+const $=id=>document.getElementById(id), ids=['final','remaining','residual-low','residual-high','pump-low','pump-high','target'];
+const format=n=>new Intl.NumberFormat('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
+let lastSummary='';
+function getNumber(id){const n=FuelBlend.parseDecimal($(id).value);if(n===null){$(id).focus();throw new Error('Renseignez tous les champs avec un nombre valide.')}return n}
+function calculate(){
+ $('error').hidden=true;
+ try{
+  const input={finalLiters:getNumber('final'),remainingLiters:getNumber('remaining'),residual:{low:getNumber('residual-low')/100,high:getNumber('residual-high')/100},e85:{low:getNumber('pump-low')/100,high:getNumber('pump-high')/100},sp98:{low:0,high:.05},target:getNumber('target')/100};
+  const out=FuelBlend.calculate(input); $('result').classList.remove('stale');$('stale').hidden=true;
+  $('status').textContent=out.feasible?'Simulation calculée':'Plafond non garanti';
+  $('result-title').textContent=out.feasible?'Votre mélange sous les hypothèses saisies.':'Le plafond ne peut pas être garanti.';
+  $('result-body').textContent=out.feasible?'Ces volumes maximisent mathématiquement l’E85 sous votre plafond. Ils ne démontrent pas la compatibilité du véhicule.':'Même avec uniquement du SP98 ajouté, la borne haute du mélange est de '+format(out.minimumUpper*100)+' %. Aucun volume d’E85 n’est proposé pour ce plafond.';
+  $('volumes').hidden=!out.feasible;
+  if(out.feasible){$('e85-liters').textContent=format(out.e85Liters)+' L';$('sp98-liters').textContent=format(out.sp98Liters)+' L'}
+  $('range-title').textContent=out.feasible?'Plage finale d’éthanol modélisée':'Plage après appoint uniquement au SP98';
+  $('range-value').textContent=format(out.final.low*100)+' – '+format(out.final.high*100)+' %';
+  $('addition').textContent=format(out.additionLiters)+' L';
+  document.querySelector('.meter').hidden=!($('estimated').checked&&Math.abs(input.remainingLiters-11.67)<.01&&Math.abs(input.finalLiters-35)<.01);
+  $('confidence').textContent=$('estimated').checked?'Volume restant estimé. Les deux crans illustrés ne constituent pas une mesure en litres.':'Calcul conditionnel au volume restant et au volume final saisis.';
+  $('above-e10').hidden=input.target<=.10;
+  $('copy-status').textContent='';
+  lastSummary='Aygo Blend • simulation\n'+$('result-body').textContent+'\n'+(out.feasible?'E85 : '+format(out.e85Liters)+' L ; SP98 : '+format(out.sp98Liters)+' L\n':'')+'Teneur : '+$('range-value').textContent+'\n'+$('confidence').textContent+'\nAucune garantie d’absence de voyant moteur.';
+ }catch(e){$('error').textContent=e.message;$('error').hidden=false;markStale();lastSummary=''}
+}
+function markStale(){$('result').classList.add('stale');$('stale').hidden=false;lastSummary=''}
+$('blend-form').addEventListener('submit',e=>{e.preventDefault();calculate()});
+for(const id of ids)$(id).addEventListener('input',markStale);$('estimated').addEventListener('change',markStale);
+$('scenario').addEventListener('click',()=>{$('final').value='35';$('remaining').value='11,67';$('residual-low').value='0';$('residual-high').value='85';$('target').value='10';$('estimated').checked=true;calculate()});
+$('e5').addEventListener('click',()=>{$('residual-low').value='0';$('residual-high').value='5';calculate()});
+$('save').addEventListener('click',()=>{try{const state=Object.fromEntries(ids.map(id=>[id,$(id).value]));state.estimated=$('estimated').checked;localStorage.setItem('aygo-blend-v1',JSON.stringify(state));$('saved').textContent='Hypothèses mémorisées sur cet appareil.'}catch(e){$('saved').textContent='La mémorisation est indisponible dans ce navigateur.'}});
+$('reset').addEventListener('click',()=>{try{localStorage.removeItem('aygo-blend-v1')}catch(e){}$('blend-form').reset();$('saved').textContent='Hypothèses initiales rétablies.';calculate()});
+$('copy').addEventListener('click',async()=>{if(!lastSummary)return;try{await navigator.clipboard.writeText(lastSummary);$('copy-status').textContent='Résultat copié.'}catch(e){const area=document.createElement('textarea');area.value=lastSummary;document.body.append(area);area.select();const ok=document.execCommand('copy');area.remove();$('copy-status').textContent=ok?'Résultat copié.':'Copie indisponible. Utilisez Imprimer.'}});
+$('print').addEventListener('click',()=>{if(lastSummary)window.print()});
+try{const state=JSON.parse(localStorage.getItem('aygo-blend-v1')||'null');if(state&&typeof state==='object'){for(const id of ids)if(typeof state[id]==='string')$(id).value=state[id];if(typeof state.estimated==='boolean')$('estimated').checked=state.estimated}}catch(e){}
+calculate();
+})();
+</script>
+</body>
+</html>

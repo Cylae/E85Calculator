@@ -1,0 +1,440 @@
+[
+  {
+    "name": "E30, remaining E5, 2/6 assumption",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 11.666666666666666,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.3
+    },
+    "expected": {
+      "feasible": true,
+      "exactE85Liters": 10.9375,
+      "e85Liters": 10.93,
+      "sp98Liters": 12.403333333333332,
+      "minimumUpper": 0.05
+    }
+  },
+  {
+    "name": "E30, remaining E50",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 11.666666666666666,
+      "residual": {
+        "low": 0.5,
+        "high": 0.5
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.3
+    },
+    "expected": {
+      "feasible": true,
+      "exactE85Liters": 4.375,
+      "e85Liters": 4.37,
+      "sp98Liters": 18.96333333333333,
+      "minimumUpper": 0.2
+    }
+  },
+  {
+    "name": "E30 impossible with remaining E85",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 11.666666666666666,
+      "residual": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.3
+    },
+    "expected": {
+      "feasible": false,
+      "exactE85Liters": null,
+      "e85Liters": null,
+      "sp98Liters": null,
+      "minimumUpper": 0.31666666666666665
+    }
+  },
+  {
+    "name": "Unknown remaining mixture, E10 cannot be guaranteed",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 11.666666666666666,
+      "residual": {
+        "low": 0,
+        "high": 0.85
+      },
+      "e85": {
+        "low": 0.54,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0,
+        "high": 0.05
+      },
+      "target": 0.1
+    },
+    "expected": {
+      "feasible": false,
+      "exactE85Liters": null,
+      "e85Liters": null,
+      "sp98Liters": null,
+      "minimumUpper": 0.31666666666666665
+    }
+  },
+  {
+    "name": "E10 with remaining E5",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 11.666666666666666,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.1
+    },
+    "expected": {
+      "feasible": true,
+      "exactE85Liters": 2.1875,
+      "e85Liters": 2.18,
+      "sp98Liters": 21.153333333333332,
+      "minimumUpper": 0.05
+    }
+  },
+  {
+    "name": "Empty tank to E30",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 0,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.3
+    },
+    "expected": {
+      "feasible": true,
+      "exactE85Liters": 10.9375,
+      "e85Liters": 10.93,
+      "sp98Liters": 24.07,
+      "minimumUpper": 0.05
+    }
+  },
+  {
+    "name": "Empty tank full E85 is constrained by space",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 0,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.54,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0,
+        "high": 0.05
+      },
+      "target": 1
+    },
+    "expected": {
+      "feasible": true,
+      "exactE85Liters": 35,
+      "e85Liters": 35,
+      "sp98Liters": 0,
+      "minimumUpper": 0.05
+    }
+  },
+  {
+    "name": "Full tank below the chosen ceiling",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 35,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.1
+    },
+    "expected": {
+      "feasible": true,
+      "exactE85Liters": 0,
+      "e85Liters": 0,
+      "sp98Liters": 0,
+      "minimumUpper": 0.05
+    }
+  },
+  {
+    "name": "E5 ceiling with E5 remaining",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 11.666666666666666,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.05
+    },
+    "expected": {
+      "feasible": true,
+      "exactE85Liters": 0,
+      "e85Liters": 0,
+      "sp98Liters": 23.333333333333332,
+      "minimumUpper": 0.05
+    }
+  },
+  {
+    "name": "Zero ethanol ceiling, all E0",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 0,
+      "residual": {
+        "low": 0,
+        "high": 0
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0,
+        "high": 0
+      },
+      "target": 0
+    },
+    "expected": {
+      "feasible": true,
+      "exactE85Liters": 0,
+      "e85Liters": 0,
+      "sp98Liters": 35,
+      "minimumUpper": 0
+    }
+  },
+  {
+    "name": "Out-of-range remaining volume",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 36,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.3
+    },
+    "error": true
+  },
+  {
+    "name": "Zero final volume",
+    "input": {
+      "finalLiters": 0,
+      "remainingLiters": 0,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.3
+    },
+    "error": true
+  },
+  {
+    "name": "Negative remaining volume",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": -1,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.3
+    },
+    "error": true
+  },
+  {
+    "name": "Reversed residual interval",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 11.666666666666666,
+      "residual": {
+        "low": 0.5,
+        "high": 0.4
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.3
+    },
+    "error": true
+  },
+  {
+    "name": "Fraction above one",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 11.666666666666666,
+      "residual": {
+        "low": 0.05,
+        "high": 1.1
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.3
+    },
+    "error": true
+  },
+  {
+    "name": "Identical source upper bounds",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 11.666666666666666,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.3
+    },
+    "error": true
+  },
+  {
+    "name": "Overlapping source intervals",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 11.666666666666666,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.01,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": 0.3
+    },
+    "error": true
+  },
+  {
+    "name": "Negative target",
+    "input": {
+      "finalLiters": 35,
+      "remainingLiters": 11.666666666666666,
+      "residual": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "e85": {
+        "low": 0.85,
+        "high": 0.85
+      },
+      "sp98": {
+        "low": 0.05,
+        "high": 0.05
+      },
+      "target": -0.1
+    },
+    "error": true
+  }
+]

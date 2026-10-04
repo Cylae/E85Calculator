@@ -1,0 +1,127 @@
+name: Verify, build and release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Optional prerelease version, such as v0.1.0. Leave empty to verify only.'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  calculations-and-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Install browser and document dependencies
+        run: |
+          python -m pip install -r requirements.txt
+          npm install
+          npx playwright install --with-deps chromium
+      - name: Test calculations and web interface
+        run: |
+          node verification/test_blend.cjs
+          node verification/test_web.cjs
+          python tooling/verify_artifacts.py
+      - name: Stage documentation and source archive
+        run: |
+          mkdir -p dist
+          cp reports/Rapport_Toyota_Aygo_E85_SP98.pdf dist/
+          cp reports/Rapport_Toyota_Aygo_E85_SP98.md dist/
+          cp web/index.html dist/Calculateur_Aygo_E85_SP98.html
+          git archive --format=zip --output=dist/Aygo_Blend_Source.zip HEAD
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-docs
+          path: dist/*
+
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        with:
+          gradle-version: '8.13'
+      - name: Build and test native Android app
+        run: gradle -p android testDebugUnitTest assembleDebug
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-android
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: android-test-results
+          path: android/app/build/reports/tests/testDebugUnitTest/
+
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Test native iOS app on available simulator
+        run: python3 tooling/test_ios.py
+      - name: Package simulator application
+        run: |
+          mkdir -p dist
+          ditto -c -k --keepParent DerivedData/Build/Products/Debug-iphonesimulator/AygoBlend.app dist/AygoBlend_iOS_Simulator.zip
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-ios
+          path: dist/AygoBlend_iOS_Simulator.zip
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.release_version != '') || (github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'Release v0.1.0')
+    needs: [calculations-and-docs, android, ios]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: release-*
+          merge-multiple: true
+          path: dist
+      - name: Publish prerelease after successful checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.release_version || 'v0.1.0' }}
+        run: |
+          if [[ ! "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ ]]; then
+            echo 'Invalid version format'
+            exit 1
+          fi
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release upload "$TAG_NAME" dist/* --clobber
+            gh release edit "$TAG_NAME" --prerelease --title "$TAG_NAME - Aygo Blend" --notes-file RELEASE_NOTES.md
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            gh release create "$TAG_NAME" --verify-tag --prerelease --title "$TAG_NAME - Aygo Blend" --notes-file RELEASE_NOTES.md dist/*
+          else
+            gh release create "$TAG_NAME" --target "$GITHUB_SHA" --prerelease --title "$TAG_NAME - Aygo Blend" --notes-file RELEASE_NOTES.md dist/*
+          fi

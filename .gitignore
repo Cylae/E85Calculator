@@ -1,0 +1,14 @@
+node_modules/
+.gradle/
+.idea/
+**/build/
+local.properties
+.DS_Store
+__pycache__/
+*.pyc
+DerivedData/
+*.xcuserstate
+xcuserdata/
+dist/
+tmp/
+verification/browser-results.json

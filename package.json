@@ -1,0 +1,16 @@
+{
+  "name": "aygo-blend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "E85/SP98 mixture simulation with explicit uncertainty and native mobile prototypes",
+  "scripts": {
+    "test": "node verification/test_blend.cjs",
+    "test:web": "node verification/test_web.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

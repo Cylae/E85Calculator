@@ -1,0 +1,63 @@
+'use strict';
+const assert=require('node:assert/strict');
+const path=require('node:path');
+const fs=require('node:fs');
+const {pathToFileURL}=require('node:url');
+let playwright;
+try { playwright=require('playwright'); }
+catch(e) { playwright=require(path.join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES || '', 'playwright')); }
+const root=path.resolve(__dirname,'..');
+(async()=>{
+ const browser=await playwright.chromium.launch({headless:true,args:['--no-sandbox']});
+ const context=await browser.newContext({viewport:{width:1366,height:1000},locale:'fr-FR'});
+ const page=await context.newPage();
+ const errors=[],remoteRequests=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('request',r=>{if(/^https?:/.test(r.url()))remoteRequests.push(r.url())});
+ let checks=0;
+ try{
+  await page.goto(pathToFileURL(path.join(root,'web/index.html')).href);
+  assert.match(await page.locator('#result-title').innerText(),/ne peut pas être garanti/);
+  assert.match(await page.locator('#range-value').innerText(),/31,67/);checks++;
+  await page.locator('#e5').click();
+  assert.equal(await page.locator('#e85-liters').innerText(),'2,18 L');checks++;
+  await page.locator('#target').fill('30');
+  assert.ok(await page.locator('#stale').isVisible());checks++;
+  await page.locator('button[type=submit]').click();
+  assert.equal(await page.locator('#e85-liters').innerText(),'10,93 L');
+  assert.equal(await page.locator('#sp98-liters').innerText(),'12,40 L');checks++;
+  await page.locator('#final').fill('35,00');
+  await page.locator('button[type=submit]').click();
+  assert.equal(await page.locator('#e85-liters').innerText(),'10,93 L');checks++;
+  await page.locator('#remaining').fill('40');
+  await page.locator('button[type=submit]').click();
+  assert.ok(await page.locator('#error').isVisible());
+  assert.ok(await page.locator('#stale').isVisible());checks++;
+  await page.locator('#remaining').fill('11,67');
+  await page.locator('#pump-low').fill('90');
+  await page.locator('button[type=submit]').click();
+  assert.ok(await page.locator('#error').isVisible());checks++;
+  await page.locator('#pump-low').fill('54');
+  await page.locator('button[type=submit]').click();
+  await page.locator('#save').click();await page.reload();
+  assert.equal(await page.locator('#target').inputValue(),'30');
+  assert.equal(await page.locator('#e85-liters').innerText(),'10,93 L');checks++;
+  await page.locator('#reset').click();
+  assert.equal(await page.locator('#target').inputValue(),'10');
+  assert.match(await page.locator('#result-title').innerText(),/ne peut pas être garanti/);checks++;
+  await context.setOffline(true);await page.reload();
+  await page.locator('#e5').click();
+  assert.equal(await page.locator('#e85-liters').innerText(),'2,18 L');checks++;
+  fs.mkdirSync(path.join(root,'tmp'),{recursive:true});
+  await page.screenshot({path:path.join(root,'tmp/web-desktop.png'),fullPage:true});
+  await page.setViewportSize({width:390,height:844});
+  await page.locator('#reset').click();
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1);
+  assert.equal(overflow,false);checks++;
+  await page.screenshot({path:path.join(root,'tmp/web-mobile.png'),fullPage:true});
+  assert.deepEqual(errors,[]);assert.deepEqual(remoteRequests,[]);checks++;
+  const result={status:'passed',interfaceChecks:checks,offline:true,remoteRequests:0,browserErrors:0};
+  fs.writeFileSync(path.join(root,'verification/browser-results.json'),JSON.stringify(result,null,2)+'\n');
+  console.log(JSON.stringify(result));
+ }finally{await browser.close()}
+})().catch(e=>{console.error(e);process.exitCode=1});
