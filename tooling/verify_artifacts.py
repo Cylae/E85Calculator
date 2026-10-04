@@ -7,23 +7,23 @@ from pypdf import PdfReader
 from math import isclose
 
 ROOT=Path(__file__).resolve().parents[1]
-md=(ROOT/'reports/Rapport_Toyota_Aygo_E85_SP98.md').read_text()
-pdf=PdfReader(ROOT/'reports/Rapport_Toyota_Aygo_E85_SP98.pdf')
+md=(ROOT/'reports/Report_Toyota_Aygo_E85_SP98.md').read_text()
+pdf=PdfReader(ROOT/'reports/Report_Toyota_Aygo_E85_SP98.pdf')
 assert len(pdf.pages)==16
 texts=[p.extract_text() or '' for p in pdf.pages]
 assert all(len(t)>500 for t in texts)
 joined='\n'.join(texts)
-for required in ('10,9375','31,666666','23,333333','58,33','54','aucune garantie'):
+for required in ('10.9375','31.666666','23.333333','58.33','54','no guarantee'):
     assert required.lower() in joined.lower(),required
 assert len([a for p in pdf.pages for a in p.get('/Annots',[])]) >= 8
-for bad in ('PLACEHOLDER','URL_IMAGE','[Lien ici]','INSERT_BLEND_ENGINE'):
+for bad in ('PLACEHOLDER','URL_IMAGE','[Link here]','INSERT_BLEND_ENGINE'):
     assert bad not in md
 engine=(ROOT/'verification/blend.js').read_text().strip()
 html=(ROOT/'web/index.html').read_text()
 embedded=html.split('/* ENGINE_START */',1)[1].split('/* ENGINE_END */',1)[0].strip()
 assert embedded==engine
 assert 'INSERT_BLEND_ENGINE' not in html
-assert '<html lang="fr">' in html
+assert '<html lang="en">' in html
 ET.parse(ROOT/'android/app/src/main/AndroidManifest.xml')
 assert 'android.permission.INTERNET' not in (ROOT/'android/app/src/main/AndroidManifest.xml').read_text()
 ET.parse(ROOT/'ios/AygoBlend.xcodeproj/xcshareddata/xcschemes/AygoBlend.xcscheme')

@@ -35,13 +35,13 @@ object BlendEngine {
         val r = input.remainingLiters
         val target = input.target
         require(c.isFinite() && r.isFinite() && target.isFinite() && c > 0 &&
-            r >= 0 && r <= c && target >= 0 && target <= 1) { "Volumes ou plafond invalides." }
-        for ((range, name) in listOf(input.residual to "Restant", input.e85 to "E85", input.sp98 to "SP98")) {
+            r >= 0 && r <= c && target >= 0 && target <= 1) { "Invalid volumes or ceiling." }
+        for ((range, name) in listOf(input.residual to "Remaining fuel", input.e85 to "E85", input.sp98 to "SP98")) {
             require(range.low.isFinite() && range.high.isFinite() && range.low >= 0 &&
-                range.high <= 1 && range.low <= range.high) { "$name : bornes invalides." }
+                range.high <= 1 && range.low <= range.high) { "$name: invalid bounds." }
         }
         require(input.e85.low >= input.sp98.high && input.e85.high > input.sp98.high) {
-            "La plage E85 doit être au-dessus de la plage SP98."
+            "The E85 interval must be above the SP98 interval."
         }
         val addition = c - r
         fun interval(x: Double): FractionRange {

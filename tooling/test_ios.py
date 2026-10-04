@@ -9,9 +9,9 @@ result=subprocess.run(['xcrun','simctl','list','devices','available','--json'],c
 devices=json.loads(result.stdout)['devices']
 candidates=[d for runtime,items in devices.items() if 'iOS' in runtime
             for d in items if d.get('isAvailable') and 'iPhone' in d['name']]
-if not candidates:raise SystemExit('Aucun simulateur iPhone disponible. Installer un runtime iOS dans Xcode.')
+if not candidates:raise SystemExit('No iPhone simulator available. Install an iOS runtime in Xcode.')
 selected=candidates[0]
-print('Simulateur : '+selected['name'],flush=True)
+print('Simulator: '+selected['name'],flush=True)
 subprocess.run(['xcodebuild','-project',str(ROOT/'ios/AygoBlend.xcodeproj'),'-scheme','AygoBlend',
     '-destination','platform=iOS Simulator,id='+selected['udid'],'-derivedDataPath',str(ROOT/'DerivedData'),
     'CODE_SIGNING_ALLOWED=NO','test'],check=True)

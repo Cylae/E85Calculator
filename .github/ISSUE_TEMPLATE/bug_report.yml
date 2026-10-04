@@ -1,0 +1,33 @@
+name: Report a defect
+description: Calculation, interface, build or documentation
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - Web calculator
+        - Android app
+        - iOS app
+        - Report or calculations
+        - CI or release
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps and assumptions
+      description: Include volumes, composition bounds, the ceiling and steps to reproduce the defect.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed and expected results
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Project version, device, operating system, browser or build tools.

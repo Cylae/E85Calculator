@@ -13,18 +13,18 @@
   function validateRange(r, name) {
     if (!r || !Number.isFinite(r.low) || !Number.isFinite(r.high) ||
         r.low < 0 || r.high > 1 || r.low > r.high) {
-      throw new Error(name + ' : bornes attendues entre 0 et 100 %, dans cet ordre.');
+      throw new Error(name + ': bounds must be between 0 and 100%, in ascending order.');
     }
   }
   function calculate(input) {
     const { finalLiters: c, remainingLiters: r, residual, e85, sp98, target } = input;
     if (![c, r, target].every(Number.isFinite) || c <= 0 || r < 0 || r > c || target < 0 || target > 1)
-      throw new Error('Volumes ou plafond invalides. Le volume final doit être positif et supérieur ou égal au restant.');
-    validateRange(residual, 'Carburant restant');
+      throw new Error('Invalid volumes or ceiling. Final volume must be positive and at least the remaining volume.');
+    validateRange(residual, 'Remaining fuel');
     validateRange(e85, 'E85');
     validateRange(sp98, 'SP98');
     if (e85.low < sp98.high || e85.high <= sp98.high)
-      throw new Error('La plage E85 doit être au-dessus de la plage SP98.');
+      throw new Error('The E85 interval must be above the SP98 interval.');
     const addition = c - r;
     function interval(x) {
       const y = addition - x;

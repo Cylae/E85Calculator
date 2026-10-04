@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
     private fun BlendScreen() {
         val prefs = remember { getSharedPreferences("blend-v1", MODE_PRIVATE) }
         var finalVolume by rememberSaveable { mutableStateOf(prefs.getString("final", "35") ?: "35") }
-        var remaining by rememberSaveable { mutableStateOf(prefs.getString("remaining", "11,67") ?: "11,67") }
+        var remaining by rememberSaveable { mutableStateOf(prefs.getString("remaining", "11.67") ?: "11.67") }
         var residualLow by rememberSaveable { mutableStateOf(prefs.getString("rLow", "0") ?: "0") }
         var residualHigh by rememberSaveable { mutableStateOf(prefs.getString("rHigh", "85") ?: "85") }
         var pumpLow by rememberSaveable { mutableStateOf(prefs.getString("pLow", "54") ?: "54") }
@@ -40,80 +40,80 @@ class MainActivity : ComponentActivity() {
         var target by rememberSaveable { mutableStateOf(prefs.getString("target", "10") ?: "10") }
         var estimated by rememberSaveable { mutableStateOf(prefs.getBoolean("estimated", true)) }
         var confirmed by rememberSaveable { mutableStateOf(false) }
-        fun number(text: String) = BlendEngine.parseDecimal(text) ?: error("Renseignez tous les champs avec un nombre valide.")
+        fun number(text: String) = BlendEngine.parseDecimal(text) ?: error("Enter a valid number in every field.")
         val computation = runCatching {
             BlendEngine.calculate(BlendInput(number(finalVolume), number(remaining),
                 FractionRange(number(residualLow)/100, number(residualHigh)/100),
                 FractionRange(number(pumpLow)/100, number(pumpHigh)/100), FractionRange(0.0, .05), number(target)/100))
         }
         val result = computation.getOrNull()
-        fun format(value: Double) = String.format(Locale.FRANCE, "%.2f", value)
+        fun format(value: Double) = String.format(Locale.US, "%.2f", value)
         val summary = when {
-            result == null -> computation.exceptionOrNull()?.message ?: "Entrées invalides."
-            !result.feasible -> "Plafond non garanti : même avec uniquement du SP98 ajouté, la borne haute est ${format(result.minimumUpper*100)} %. Aucun volume E85 calculé."
-            else -> "Simulation : E85 ${format(result.e85Liters ?: 0.0)} L ; SP98 ${format(result.sp98Liters ?: 0.0)} L ; teneur finale entre ${format(result.final.low*100)} et ${format(result.final.high*100)} %."
+            result == null -> computation.exceptionOrNull()?.message ?: "Invalid input."
+            !result.feasible -> "Ceiling cannot be guaranteed: even after adding only SP98, the upper bound is ${format(result.minimumUpper*100)}%. No E85 volume calculated."
+            else -> "Simulation : E85 ${format(result.e85Liters ?: 0.0)} L ; SP98 ${format(result.sp98Liters ?: 0.0)} L ; final ethanol between ${format(result.final.low*100)} and ${format(result.final.high*100)} %."
         }
         Column(Modifier.fillMaxSize().safeDrawingPadding().verticalScroll(rememberScrollState()).imePadding()
             .padding(horizontal = 20.dp, vertical = 32.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Aygo Blend", style = MaterialTheme.typography.headlineLarge)
-            Text("Calcul de mélange • simulation", style = MaterialTheme.typography.titleMedium)
+            Text("Blend calculation • simulation", style = MaterialTheme.typography.titleMedium)
             Card {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Aucun ratio sans voyant moteur n’est établi.", style = MaterialTheme.typography.titleMedium)
-                    Text("Ce résultat décrit un mélange. Il ne valide ni la compatibilité de votre véhicule, ni sa calibration moteur.")
+                    Text("No blend guaranteeing no engine warning light is established.", style = MaterialTheme.typography.titleMedium)
+                    Text("This result describes a blend. It does not validate vehicle compatibility or ECU calibration.")
                 }
             }
             Button(onClick = {
-                finalVolume = "35"; remaining = "11,67"; residualLow = "0"; residualHigh = "85"
+                finalVolume = "35"; remaining = "11.67"; residualLow = "0"; residualHigh = "85"
                 target = "10"; estimated = true; confirmed = false
-            }, modifier = Modifier.fillMaxWidth()) { Text("Scénario : 2 crans sur 6 (estimation)") }
-            NumericField("Volume final simulé (L)", finalVolume) { finalVolume = it; confirmed = false }
-            NumericField("Volume restant (L)", remaining) { remaining = it; confirmed = false }
+            }, modifier = Modifier.fillMaxWidth()) { Text("Scenario: 2 bars out of 6 (estimate)") }
+            NumericField("Simulated final volume (L)", finalVolume) { finalVolume = it; confirmed = false }
+            NumericField("Remaining volume (L)", remaining) { remaining = it; confirmed = false }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                NumericField("Restant min. (%)", residualLow, Modifier.weight(1f)) { residualLow = it; confirmed = false }
-                NumericField("Restant max. (%)", residualHigh, Modifier.weight(1f)) { residualHigh = it; confirmed = false }
+                NumericField("Remaining fuel min. (%)", residualLow, Modifier.weight(1f)) { residualLow = it; confirmed = false }
+                NumericField("Remaining fuel max. (%)", residualHigh, Modifier.weight(1f)) { residualHigh = it; confirmed = false }
             }
             TextButton(onClick = { residualLow = "0"; residualHigh = "5"; confirmed = false }) {
-                Text("Restant composé uniquement de carburant E5")
+                Text("Remaining fuel consists only of E5")
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                NumericField("Pompe E85 min. (%)", pumpLow, Modifier.weight(1f)) { pumpLow = it; confirmed = false }
-                NumericField("Pompe E85 max. (%)", pumpHigh, Modifier.weight(1f)) { pumpHigh = it; confirmed = false }
+                NumericField("Pump E85 min. (%)", pumpLow, Modifier.weight(1f)) { pumpLow = it; confirmed = false }
+                NumericField("Pump E85 max. (%)", pumpHigh, Modifier.weight(1f)) { pumpHigh = it; confirmed = false }
             }
-            Text("54 % est une borne théorique prudente pour l’éthanol pur : l’annexe réglementaire borne la somme éthanol + alcools supérieurs, ces derniers pouvant atteindre 6 %. SP98 modélisé entre 0 et 5 %.", style = MaterialTheme.typography.bodySmall)
-            NumericField("Plafond d’éthanol choisi (%)", target) { target = it; confirmed = false }
+            Text("54% is a conservative theoretical pure-ethanol lower bound: the regulatory annex bounds ethanol plus higher alcohols, which may reach 6%. SP98 is modelled at 0–5%.", style = MaterialTheme.typography.bodySmall)
+            NumericField("Selected ethanol ceiling (%)", target) { target = it; confirmed = false }
             Row {
                 Checkbox(estimated, onCheckedChange = { estimated = it; confirmed = false })
-                Text("Le volume restant est estimé", Modifier.padding(top = 12.dp))
+                Text("The remaining volume is estimated", Modifier.padding(top = 12.dp))
             }
-            Text(if (estimated) "Les crans ne mesurent pas les litres. Le calcul reste conditionnel."
-                else "Le volume final saisi doit correspondre au volume réel retenu pour le calcul.")
-            if ((BlendEngine.parseDecimal(target) ?: 0.0) > 10) Text("Objectif au-delà de l’E10 : validation spécifique du véhicule nécessaire.", color = MaterialTheme.colorScheme.error)
-            Button(onClick = { confirmed = true }, modifier = Modifier.fillMaxWidth()) { Text("Calculer la simulation") }
+            Text(if (estimated) "Gauge bars do not measure litres. The calculation remains conditional."
+                else "The final volume must match the actual volume used for the calculation.")
+            if ((BlendEngine.parseDecimal(target) ?: 0.0) > 10) Text("Target above E10: vehicle-specific validation is required.", color = MaterialTheme.colorScheme.error)
+            Button(onClick = { confirmed = true }, modifier = Modifier.fillMaxWidth()) { Text("Calculate the simulation") }
             if (confirmed) {
                 Card {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(summary, style = MaterialTheme.typography.titleMedium)
                         if (result != null) {
-                            Text("Volume à compléter dans ce scénario : ${format(result.additionLiters)} L.")
-                            if (result.feasible) Text("E85 arrondi vers le bas au centilitre. Le SP98 est le complément ; affichage arrondi. Ne dépassez pas le premier arrêt automatique de la pompe.")
-                            if (result.limitedBySpace) Text("Le volume disponible limite l’ajout : le plafond choisi n’est pas nécessairement atteint.")
+                            Text("Additional volume in this scenario : ${format(result.additionLiters)} L.")
+                            if (result.feasible) Text("E85 is rounded down to 0.01 L. SP98 is the remainder; its display is rounded. Do not exceed the first automatic pump shut-off.")
+                            if (result.limitedBySpace) Text("Available space limits the addition: the selected ceiling may not be reached.")
                         }
                     }
                 }
                 OutlinedButton(onClick = {
                     startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"; putExtra(Intent.EXTRA_TEXT, summary + "\nCalcul conditionnel, aucune garantie d’absence de voyant moteur.")
-                    }, "Partager la simulation"))
-                }, modifier = Modifier.fillMaxWidth()) { Text("Partager") }
+                    }, "Share simulation"))
+                }, modifier = Modifier.fillMaxWidth()) { Text("Share") }
             }
             OutlinedButton(onClick = {
                 prefs.edit().putString("final", finalVolume).putString("remaining", remaining)
                     .putString("rLow", residualLow).putString("rHigh", residualHigh)
                     .putString("pLow", pumpLow).putString("pHigh", pumpHigh)
                     .putString("target", target).putBoolean("estimated", estimated).apply()
-            }, modifier = Modifier.fillMaxWidth()) { Text("Mémoriser les hypothèses sur cet appareil") }
-            Text("Sources : Toyota (Aygo 2014, 35 L), ministère chargé de l’écologie (E5/E10), arrêté du 28 décembre 2006 consolidé au 4 octobre 2026. Voir le rapport pour les liens et limites.", style = MaterialTheme.typography.bodySmall)
+            }, modifier = Modifier.fillMaxWidth()) { Text("Save assumptions on this device") }
+            Text("Sources: Toyota (2014 Aygo, 35 L), French ecology ministry (E5/E10), fuel order of 28 December 2006 consolidated on 4 October 2026. See the report for links and limitations.", style = MaterialTheme.typography.bodySmall)
         }
     }
 }

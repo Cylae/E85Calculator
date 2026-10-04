@@ -1,13 +1,14 @@
-# Aygo Blend 0.1.0 - Préversion
+# E85Calculator 0.1.0 - Prerelease
 
-Première ébauche fonctionnelle de calcul de composition E85 / SP98 pour documenter le cas d’une Toyota Aygo 2014.
+Initial native mobile prototypes and a fuel-composition calculator documenting the 2014 Toyota Aygo E85/SP98 scenario. All project documentation, interfaces and messages are in English.
 
-- Rapport français en Markdown et PDF : sources primaires, formule, calculs détaillés, incertitudes et limites de l’objectif « sans voyant moteur ».
-- Android natif en Kotlin / Jetpack Compose et iOS natif en Swift / SwiftUI, avec projets de construction et tests du moteur.
-- Calculateur HTML autonome, utilisable hors ligne.
-- 18 cas de référence ; 10 000 simulations déterministes et vérifications des interfaces web en CI.
-- Construction Android et tests iOS requis avant publication automatique des artefacts.
+- English Markdown and 16-page PDF report with primary sources, detailed calculations, uncertainty bounds and warning-light limitations.
+- Native Android app in Kotlin / Jetpack Compose and native iOS app in Swift / SwiftUI, with build projects and engine tests.
+- Standalone offline HTML calculator with explicit local storage, reset and result sharing.
+- 18 shared reference cases, nine decimal-parsing cases, 10,000 deterministic simulations and 20 engine tests per native platform.
+- Browser checks and Android/iOS verification required before release assets are published.
+- Pinned GitHub Actions, dependency updates, contribution instructions and a bug-report template.
 
-Cette version calcule une composition sous hypothèses. Aucun ratio maximal sans voyant moteur n’est validé pour l’Aygo. L’absence de voyant n’atteste pas, à elle seule, la compatibilité du carburant.
+This version calculates composition under assumptions. No maximum blend guaranteeing no engine warning light is validated for the Aygo. Absence of a warning light alone does not establish fuel compatibility.
 
-L’APK joint par la CI est une construction de développement. L’archive iOS concerne le simulateur et ne contient pas d’IPA signé pour iPhone. Ces artefacts ne sont disponibles que si les jobs correspondants réussissent.
+The Android asset is a **debug APK**. The iOS archive contains a **simulator application**, not a signed IPA for a physical iPhone. Release assets are created only after the corresponding CI jobs pass.

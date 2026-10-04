@@ -2,23 +2,23 @@
 
 [![CI](https://github.com/Cylae/E85Calculator/actions/workflows/ci.yml/badge.svg)](https://github.com/Cylae/E85Calculator/actions/workflows/ci.yml)
 
-Calculateur de composition E85 / SP98, rapport technique pour une Toyota Aygo 2014 et ébauches **natives Android et iOS**.
+An E85/SP98 composition calculator, a sourced technical report for a 2014 Toyota Aygo, and **native Android and iOS prototypes**. All documentation, app interfaces, validation messages and release notes are in English. The fuel specifications covered by the report apply to France.
 
-**Aucun ratio maximal sans voyant moteur n’est établi pour une Aygo non convertie.** Ce projet calcule des mélanges sous hypothèses. Il ne détermine pas la tolérance d’un moteur et ne remplace pas une validation de conversion ou un diagnostic.
+**No maximum blend guaranteeing the absence of an engine warning light is established for an unconverted Aygo.** This project simulates composition under assumptions; it does not determine engine tolerance or replace conversion validation or diagnosis.
 
-Le réservoir nominal de l’Aygo 2014 est de 35 L. Le scénario « deux crans sur six » est une approximation explicative de 11,67 L restants. Il ne constitue pas une mesure de jauge.
+Toyota specifies a nominal 35 L tank. The “two bars out of six” scenario uses an illustrative 11.67 L remaining volume. Gauge bars are not a measurement in litres.
 
-| Contenu | Emplacement |
+| Deliverable | Location |
 | --- | --- |
-| Rapport français, calculs, limites et sources | [Markdown](reports/Rapport_Toyota_Aygo_E85_SP98.md) et [PDF](reports/Rapport_Toyota_Aygo_E85_SP98.pdf) |
-| Calculateur autonome et hors ligne | [web/index.html](web/index.html) |
-| Android : Kotlin + Jetpack Compose | [android/](android/) |
-| iOS : Swift + SwiftUI | [ios/AygoBlend.xcodeproj](ios/AygoBlend.xcodeproj) |
-| Moteur de référence et tests numériques | [verification/](verification/) |
-| Génération documentaire et contrôles | [tooling/](tooling/) |
-| Compilation, tests et release | [.github/workflows/ci.yml](.github/workflows/ci.yml) |
+| English report with calculations, limitations and primary sources | [Markdown](reports/Report_Toyota_Aygo_E85_SP98.md) and [PDF](reports/Report_Toyota_Aygo_E85_SP98.pdf) |
+| Standalone offline calculator | [web/index.html](web/index.html) |
+| Native Android: Kotlin + Jetpack Compose | [android/](android/) |
+| Native iOS: Swift + SwiftUI | [ios/AygoBlend.xcodeproj](ios/AygoBlend.xcodeproj) |
+| Reference calculation engine and tests | [verification/](verification/) |
+| Document generation and structural checks | [tooling/](tooling/) |
+| Build, test and release pipeline | [.github/workflows/ci.yml](.github/workflows/ci.yml) |
 
-## Modèle
+## Model
 
 ```text
 ef = (R × er + X × ep + Y × es) / C
@@ -26,39 +26,39 @@ C = R + X + Y
 X = [C × t - R × er - (C-R) × es] / (ep - es)
 ```
 
-Les volumes sont en litres et les fractions entre 0 et 1. `X` désigne les litres de carburant commercialisé comme E85, et non des litres d’éthanol pur. Le solveur utilise les bornes hautes pour maximiser `X` sous un plafond choisi. Il refuse de produire un volume E85 si même un appoint uniquement au SP98 ne peut garantir ce plafond dans le modèle. `X` est arrondi vers le bas au centilitre.
+Volumes are in litres; fractions range from 0 to 1. `X` is the volume of fuel sold as E85, not pure ethanol. The solver uses upper composition bounds to maximise `X` under a selected ceiling. If even adding only SP98 cannot guarantee that ceiling, it returns an infeasible result and no E85 quantity. `X` is rounded down to 0.01 L.
 
-Par défaut : volume final simulé 35 L, restant estimé 11,67 L, teneur du restant inconnue de 0 à 85 %, SP98 de 0 à 5 %, E85 de 54 à 85 %, plafond 10 %. Le chiffre 54 % est une borne théorique prudente pour l’éthanol pur : la réglementation française borne la somme éthanol + alcools supérieurs, lesquels peuvent atteindre 6 %. Le lot réel demande une mesure ou une documentation de composition.
+Defaults: simulated final volume 35 L, estimated remaining volume 11.67 L, unknown remaining ethanol 0–85%, SP98 0–5%, pump E85 54–85%, selected ceiling 10%. The 54% lower bound distinguishes pure ethanol from the regulatory sum of ethanol and higher alcohols, which may contribute up to 6%. Actual batch composition requires measurement or documentation.
 
-Un plafond de 10 % dans ce calcul n’atteste pas que le mélange respecte toutes les spécifications du SP95-E10 normalisé. Les applications n’établissent pas de seuil anti-voyant, ne commandent pas l’ECU et n’effacent aucun défaut.
+A simulated 10% ceiling does not establish compliance with every standardised SP95-E10 requirement. The apps neither predict warning lights nor control the ECU or clear faults.
 
-## Utilisation immédiate de la démonstration
+## Use the offline calculator
 
-Ouvrir `web/index.html` dans un navigateur. Le fichier contient son moteur, son interface et ses styles ; aucune installation et aucune requête distante ne sont nécessaires au calcul. La mémorisation des hypothèses est locale et explicite. Les liens des sources s’ouvrent uniquement à la demande.
+Open `web/index.html` in a browser. Its engine, interface and styles are embedded; calculation requires no installation or remote requests. Saving assumptions is explicit and local. Source links open only when requested. Displayed numbers use English decimal points; input also accepts a decimal comma.
 
 ## Android
 
-Prérequis : Android Studio compatible AGP 8.13, JDK 17, SDK Android 36 et Gradle 8.13. Ouvrir le dossier `android/` en projet Gradle. Le projet utilise AGP 8.13.2, Kotlin 2.2.20 et Compose BOM 2025.09.00 ; Android 8.0 / API 26 minimum.
+Requirements: Android Studio compatible with AGP 8.13, JDK 17, Android SDK 36 and Gradle 8.13. Open `android/` as a Gradle project. Dependencies: AGP 8.13.2, Kotlin 2.2.20 and Compose BOM 2025.09.00. Minimum Android version: API 26 / Android 8.0.
 
-Un wrapper binaire Gradle n’est pas embarqué. La CI installe la version de Gradle spécifiée. Avec Gradle 8.13 disponible localement :
+A binary Gradle wrapper is not included. CI installs the specified Gradle version. With Gradle 8.13 available:
 
 ```bash
 gradle -p android testDebugUnitTest assembleDebug
 ```
 
-L’APK de développement résultant est `android/app/build/outputs/apk/debug/app-debug.apk`. L’application ne demande aucune permission réseau. Les champs sont mémorisés localement lorsque l’utilisateur choisit de les enregistrer.
+The debug APK is created at `android/app/build/outputs/apk/debug/app-debug.apk`. The app requests no network permission. It saves fields locally only when the user chooses to save them.
 
 ## iOS
 
-Ouvrir `ios/AygoBlend.xcodeproj` dans Xcode et sélectionner un simulateur iPhone ou iPad. Le projet inclut un schéma partagé `AygoBlend` et une cible XCTest. Cible minimum iOS 16 ; aucune dépendance externe.
+Open `ios/AygoBlend.xcodeproj` in Xcode and select an iPhone or iPad simulator. The project includes a shared `AygoBlend` scheme and an XCTest target. Minimum iOS version: 16. No external dependencies.
 
 ```bash
 python3 tooling/test_ios.py
 ```
 
-Le script choisit un simulateur iPhone disponible, puis lance `xcodebuild test` avec la signature désactivée pour le simulateur. Pour un iPhone physique, une équipe de signature Apple et une construction pour appareil sont nécessaires. Une archive de simulateur n’est pas un IPA installable.
+The script chooses an available iPhone simulator and runs `xcodebuild test` with simulator code signing disabled. A physical iPhone requires an Apple signing team and a device build. The simulator archive is not an installable iPhone IPA. Assumptions are stored locally through `AppStorage` as they are edited.
 
-## Vérification et génération
+## Generate and verify
 
 ```bash
 node verification/test_blend.cjs
@@ -69,9 +69,9 @@ python3 tooling/build_html.py
 python3 tooling/verify_artifacts.py
 ```
 
-Les 18 cas numériques sont utilisés dans le moteur JavaScript et comme fixtures de test Kotlin/XCTest. Le test JavaScript effectue aussi 10 000 simulations déterministes avec conservation des volumes, contrôle des bornes et recherche indépendante du maximum. Chaque suite mobile comporte 20 tests.
+The same 18 numerical cases are used by JavaScript and generated as Kotlin/XCTest fixtures. JavaScript also checks nine parsing cases and 10,000 deterministic simulations, including volume conservation, interval bounds and an independently searched maximum. Each native suite contains 20 tests.
 
-Les tests de navigateur utilisent Playwright. Avec Node.js et npm :
+Browser checks use Playwright:
 
 ```bash
 npm install
@@ -79,36 +79,30 @@ npx playwright install chromium
 node verification/test_web.cjs
 ```
 
-La CI exécute ces vérifications, construit l’APK de développement et teste l’application iOS sur simulateur. Un échec de compilation ou de test bloque la publication automatique de release.
+The browser suite verifies reset after saving, stale results, comma input, invalid volumes, impossible ceilings, offline operation and mobile overflow. CI runs these checks, builds the Android debug APK and tests iOS on a simulator. Failed checks block release publication. Browser screenshots and test summaries are retained as CI artifacts.
 
-**État de la remise 0.1.0 :** le moteur JavaScript et l’identité du moteur embarqué dans le HTML sont vérifiés dans l’environnement de création. Le PDF est contrôlé visuellement. Les tests mobiles et de navigateur sont fournis ; cet environnement ne dispose pas des SDK Android et Apple ni d’un navigateur exécutable, donc leur réussite ne peut pas être affirmée sans une exécution native ou de CI.
+The report's PDF layout is visually reviewed after generation. For the exact published commit's build status, use the CI badge and the linked workflow run rather than assuming success from the existence of workflow files.
 
-## Publication GitHub
+## Release
 
-Le dépôt du projet est [Cylae/E85Calculator](https://github.com/Cylae/E85Calculator), avec la description :
+Tags matching `v*` run verification. After all three verification jobs pass, the release job publishes a **prerelease** containing the PDF, Markdown, offline HTML, source archive, Android debug APK and iOS simulator app archive. Notes come from `RELEASE_NOTES.md`.
 
-> Calculateur E85/SP98 pour Toyota Aygo : rapport sourcé, simulations avec incertitudes et prototypes natifs Kotlin/Compose et Swift/SwiftUI.
+The workflow can also be started from Actions with `release_version` set to a version such as `v0.1.0`. It creates the tag and prerelease on the verified commit after all jobs pass. Leaving the field empty runs verification only.
 
-Pour créer une copie dans un autre nouveau dépôt, le script `tooling/publish_github.py` utilise l’identité GitHub réellement authentifiée. Il crée un **nouveau dépôt privé par défaut**, configure la description et les sujets, pousse `main`, puis le tag `v0.1.0`. Il évite de modifier un dépôt préexistant portant ce nom. `--public` permet une publication publique explicite.
+For the initial publication through an integration that can push commits but cannot create tags, an exact commit message of `Release v0.1.0` on `main` also requests that first prerelease. The same checks still apply.
+
+## Publish a new copy
+
+`tooling/publish_github.py` uses the authenticated GitHub CLI identity to create a new private repository by default, configure its description and topics, push `main`, then push `v0.1.0`. It avoids modifying an existing repository of the same name. Use `--public` only for an explicitly public copy.
 
 ```bash
 python3 tooling/publish_github.py
 ```
 
-Prérequis de cette commande : Git et GitHub CLI (`gh`) installés, compte déjà authentifié, fichiers revus et commit local sur `main`. La création du dépôt nécessite une capacité GitHub de création de repositories ; le seul accès aux fichiers d’un dépôt existant ne suffit pas.
+This command requires Git, authenticated GitHub CLI, a clean reviewed commit on `main`, and no existing remote. It is for a new copy; the current project is [Cylae/E85Calculator](https://github.com/Cylae/E85Calculator).
 
-## Release
+## Sources and maintenance
 
-Un tag `v*` déclenche les mêmes contrôles que les changements de code. Après réussite de tous les jobs, le job release publie une **préversion** avec le rapport PDF, le Markdown, la page HTML, les sources, l’APK de développement et une application pour simulateur iOS. Les notes proviennent de `RELEASE_NOTES.md`.
+Primary sources, dates and relevant pages are listed in the report. Regulatory bounds were checked on 4 October 2026 and do not update automatically. Changes must document updated assumptions and amend affected test cases. See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow.
 
-Le workflow peut également être lancé depuis l’onglet Actions avec le champ `release_version` égal à `v0.1.0`. Dans ce mode, il crée le tag et la préversion sur le commit vérifié après réussite de tous les jobs. Laisser ce champ vide exécute uniquement les vérifications.
-
-Pour la première publication depuis une intégration qui peut pousser des commits mais ne peut pas créer de tag, un commit sur `main` dont le message complet est exactement `Release v0.1.0` déclenche aussi la préversion `v0.1.0`. Les trois jobs de vérification doivent réussir avant sa création.
-
-La présence de ces workflows ne signifie pas qu’un dépôt ou une release ont déjà été publiés. Seuls les résultats GitHub constatés attestent la publication et les constructions.
-
-## Sources et maintenance
-
-Les sources primaires, leurs dates et les passages pertinents figurent dans le rapport. Les bornes sont vérifiées au 4 octobre 2026 et ne s’actualisent pas automatiquement. Chaque modification documentaire doit être accompagnée d’une mise à jour des hypothèses et des cas de test concernés.
-
-Licence MIT. Documentation et calculs produits pour ce projet ; aucune affiliation à Toyota.
+MIT licence. No affiliation with Toyota.

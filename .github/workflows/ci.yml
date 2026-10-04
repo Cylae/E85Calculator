@@ -45,14 +45,23 @@ jobs:
       - name: Stage documentation and source archive
         run: |
           mkdir -p dist
-          cp reports/Rapport_Toyota_Aygo_E85_SP98.pdf dist/
-          cp reports/Rapport_Toyota_Aygo_E85_SP98.md dist/
-          cp web/index.html dist/Calculateur_Aygo_E85_SP98.html
+          cp reports/Report_Toyota_Aygo_E85_SP98.pdf dist/
+          cp reports/Report_Toyota_Aygo_E85_SP98.md dist/
+          cp web/index.html dist/Calculator_Aygo_E85_SP98.html
           git archive --format=zip --output=dist/Aygo_Blend_Source.zip HEAD
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-docs
           path: dist/*
+          if-no-files-found: error
+      - name: Save browser verification results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: browser-verification
+          path: |
+            verification/browser-results.json
+            tmp/web-*.png
 
   android:
     runs-on: ubuntu-latest
@@ -72,6 +81,7 @@ jobs:
         with:
           name: release-android
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
@@ -93,6 +103,7 @@ jobs:
         with:
           name: release-ios
           path: dist/AygoBlend_iOS_Simulator.zip
+          if-no-files-found: error
 
   release:
     if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.release_version != '') || (github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'Release v0.1.0')

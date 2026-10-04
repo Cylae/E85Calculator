@@ -38,16 +38,16 @@ enum BlendEngine {
     static func calculate(_ input: BlendInput) throws -> BlendOutput {
         let c = input.finalLiters, r = input.remainingLiters, t = input.target
         guard c.isFinite, r.isFinite, t.isFinite, c > 0, r >= 0, r <= c, t >= 0, t <= 1 else {
-            throw BlendError.invalid("Volumes ou plafond invalides.")
+            throw BlendError.invalid("Invalid volumes or ceiling.")
         }
-        for (range, name) in [(input.residual, "Restant"), (input.e85, "E85"), (input.sp98, "SP98")] {
+        for (range, name) in [(input.residual, "Remaining fuel"), (input.e85, "E85"), (input.sp98, "SP98")] {
             guard range.low.isFinite, range.high.isFinite, range.low >= 0,
                   range.high <= 1, range.low <= range.high else {
-                throw BlendError.invalid("\(name) : bornes invalides.")
+                throw BlendError.invalid("\(name): invalid bounds.")
             }
         }
         guard input.e85.low >= input.sp98.high, input.e85.high > input.sp98.high else {
-            throw BlendError.invalid("La plage E85 doit être au-dessus de la plage SP98.")
+            throw BlendError.invalid("The E85 interval must be above the SP98 interval.")
         }
         let addition = c - r
         func interval(_ x: Double) -> FractionRange {
